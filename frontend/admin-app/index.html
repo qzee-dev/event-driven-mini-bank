@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Admin</h1>
+
+<button onclick="load()">Transactions</button>
+<pre id="tx"></pre>
+
+<script>
+async function load(){
+  const res=await fetch("http://localhost:3000/transactions");
+  tx.innerText=JSON.stringify(await res.json(),null,2);
+}
+</script>
+</body>
+</html>
