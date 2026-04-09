@@ -1,34 +1,51 @@
-<!DOCTYPE html>
-<html>
-<body>
-<h1>User App</h1>
+<input id="username" placeholder="Username">
+<input id="password" placeholder="Password">
+<button onclick="login()">Login</button>
 
-<button onclick="loadUsers()">Users</button>
+<h3>Users</h3>
+<button onclick="loadUsers()">Load Users</button>
 <pre id="users"></pre>
 
-<input id="from" placeholder="from">
-<input id="to" placeholder="to">
-<input id="amount" placeholder="amount">
+<h3>Transfer</h3>
+<input id="from" placeholder="From">
+<input id="to" placeholder="To">
+<input id="amount" placeholder="Amount">
 <button onclick="transfer()">Send</button>
 
 <script>
+let TOKEN = "";
+
+async function login(){
+  const res = await fetch("http://localhost:8080/api/login", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ username: username.value, password: password.value })
+  });
+  const data = await res.json();
+  TOKEN = data.token;
+  alert("Logged in!");
+}
+
 async function loadUsers(){
-  const res=await fetch("http://localhost:3000/users");
+  const res = await fetch("http://localhost:8080/api/users", {
+    headers: { Authorization: "Bearer " + TOKEN }
+  });
   users.innerText=JSON.stringify(await res.json(),null,2);
 }
 
 async function transfer(){
-  await fetch("http://localhost:3000/transfer",{
+  await fetch("http://localhost:8080/api/transfer", {
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+TOKEN
+    },
     body:JSON.stringify({
       from:Number(from.value),
       to:Number(to.value),
       amount:Number(amount.value)
     })
   });
-  alert("Processing");
+  alert("Processing...");
 }
 </script>
-</body>
-</html>
